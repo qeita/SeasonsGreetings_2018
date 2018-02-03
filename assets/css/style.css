@@ -1,0 +1,135 @@
+* {
+    margin: 0;
+    padding: 0;
+    outline: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+canvas{
+    display: block;
+    pointer-events: none;
+}
+
+#content{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0);
+    transition: 0.3s all;
+    pointer-events: none;
+}
+
+.content__box{
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    width: 50%;
+    height: 60%;
+    margin: auto;
+    overflow: hidden;
+    color: #fff;
+}
+
+@media screen and (max-width: 640px){
+    .content__box{
+        width: 80%;
+        height: 50%;
+    }
+}
+
+.content--show .content__header{
+    opacity: 0;
+}
+.content--show .content__main{
+    opacity: 1;
+}
+
+.content__header{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: 0.3s opacity;
+}
+
+.content__hdg{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    font-family: 'Oswald', sans-serif;
+    font-size: 36px;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.content__main{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    font-size: 16px;
+    line-height: 1.8;
+    letter-spacing: 0.06em;
+    opacity: 0;
+    transition: 0.3s opacity;
+}
+
+
+.content__main:before{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 30px;
+    content: '';
+    background: -prefix-linear-gradient(top, #333, rgba(255, 255, 255, 0));
+    background: linear-gradient(to bottom, #333, rgba(255, 255, 255, 0));
+    z-index: 2;
+}
+
+.content__main:after{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30px;
+    content: '';
+    background: -prefix-linear-gradient(top, rgba(255, 255, 255, 0), #333);
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #333);
+    z-index: 2;
+}
+
+.content__txt{
+    position: relative;
+    padding: 200px 0 30px;
+}
+.content__txt p{
+    pointer-events: none;
+    text-shadow: 0 0 10px #000;
+}
+
+#indicator{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    overflow: hidden;
+}
+
+.indicator__bar{
+    width: 0;
+    height: 4px;
+    background: #f33d52;
+}

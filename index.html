@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>GLSL Shader</title>
+    <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
+    <link rel="stylesheet" href="./assets/css/style.css">
+  </head>
+  <body>
+    <script id="vs" type="x-shader/x-vertex">
+      attribute vec3 position;
+      attribute vec3 tex;
+
+      uniform mat4 projectionMatrix;
+      uniform mat4 modelViewMatrix;
+      uniform float size;
+
+      varying vec3 texOut;
+
+      void main(){
+        // gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(
+          position.x * size,
+          position.y,
+          position.z * size,
+          1.0
+        );
+
+        texOut = tex;
+      }
+    </script>
+
+    <script id="fs" type="x-shader/x-fragment">
+      precision highp float;
+
+      const float modulus = 61.0; // Value used in pregenerated noise texture.
+      const int octives = 4;
+      const float lacunarity = 2.0;
+      const float gain = 0.5;
+      const float magnatude = 1.3;
+
+      uniform float time;
+      uniform sampler2D nzw;
+      uniform sampler2D fireProfile;
+
+      varying vec3 texOut;
+
+      // Modified Blum Blum Shub pseudo-random number generator.
+      vec2 mBBS(vec2 val, float modulus){
+        val = mod(val, modulus);
+        return mod(val * val, modulus);
+      }
+
+      /**
+       * Modified noise function.
+       * @see http://www.csee.umbc.edu/~olano/papers/index.html#mNoise
+       **/
+      float mnoise(vec3 pos){
+        float intArg = floor(pos.z);
+        float fracArg = fract(pos.z);
+        vec2 hash = mBBS(intArg * 3.0 + vec2(0.0, 3.0), modulus);
+        vec4 g = vec4(
+          texture2D(nzw, vec2(pos.x, pos.y + hash.x) / modulus).xy,
+          texture2D(nzw, vec2(pos.x, pos.y + hash.y) / modulus).xy
+        ) * 2.0 - 1.0;
+
+        return mix(g.x + g.y * fracArg, g.z + g.w * (fracArg - 1.0), smoothstep(0.0, 1.0, fracArg));
+      }
+
+      /**
+       * Adds multiple octives of noise together.
+       **/
+      float turbulence(vec3 pos){
+        float sum = 0.0;
+        float freq = 1.0;
+        float amp = 1.0;
+        for(int i = 0; i < octives; i++){
+          sum += abs(mnoise(pos * freq)) * amp;
+          freq *= lacunarity;
+          amp *= gain;
+        }
+        return sum;
+      }
+
+      /**
+       * Samples the fire.
+       *
+       * @param loc the normalized location (0.0 - 1.0) to sample the fire
+       * @param scale the 'size' of the fire in world space and time
+       **/
+      vec4 sampleFire(vec3 loc, vec4 scale){
+        // Convert xy to [-1.0, 1.0] range.
+        loc.xz = loc.xz * 2.0 - 1.0;
+
+        // Convert to (radius, height) to sample fire profile texture.
+        vec2 st = vec2(sqrt(dot(loc.xz, loc.xz)), loc.y);
+
+        // Convert loc to 'noise' space
+        loc.y -= time * scale.w; // Scrolling noise upwards over time.
+        loc *= scale.xyz; // Scaling noise space.
+
+        // Offsetting vertial texture lookup.
+        // We scale this by the sqrt of the height so that things are relatively stable
+        // at the base of the fire and volital at the top.
+        float offset = sqrt(st.y) * magnatude * turbulence(loc);
+        st.y += offset;
+
+        if(st.y > 1.0){
+          return vec4(0.0, 0.0, 0.0, 1.0);
+        }
+
+        // Fading out bottom so slice clipping isnt obvious
+        vec4 result = texture2D(fireProfile, st);
+
+        if(st.y < 0.1){
+          result *= st.y / 0.1;
+        }
+
+        return result;
+      }
+
+      void main(){
+        // Mapping texture coordinate to -1 -> 1 for xy, 0 -> for y
+        vec3 color = sampleFire(texOut, vec4(1.0, 2.0, 1.0, 0.5)).xyz;
+        gl_FragColor = vec4(color * 1.5, 1.0);
+      }
+    </script>
+
+    <div id="container"></div>
+
+    <div id="content">
+      <div class="content__box">
+        <div class="content__header">
+          <h1 class="content__hdg"></h1>
+        </div>
+        <div class="content__main">
+          <div class="content__txt"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="indicator">
+      <div class="indicator__bar"></div>
+    </div>
+
+    <script src="./assets/js/utils/xhr.js"></script>
+    <script src="./assets/js/utils/detectDevice.js"></script>
+
+    <script src="./assets/js/libs/TweenMax.min.js"></script>
+    <script src="./assets/js/libs/three.min.js"></script>
+    <script src="./assets/js/libs/OrbitControls.js"></script>
+    <script src="./assets/js/fire.js"></script>
+    <script defer src="./assets/js/app.js"></script>
+  </body>
+</html>
