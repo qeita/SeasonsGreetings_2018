@@ -1,7 +1,7 @@
 'use strict';
 
 ( () => {
-  let controls, camera, scene, renderer, raycaster; // Three.js用変数
+  let controls, camera, scene, renderer, composer, renderPass; // Three.js用変数
   let container; // DOM変数
 
   /**
@@ -11,15 +11,21 @@
   let fireElement;
   let prevTime, now;
   let timer = null;
+  let scrollTimer = null;
 
   let content = document.getElementById('content');
   let header = content.children[0];
   let main = content.children[1];
-
   let textArea = document.querySelector('.content__txt');
   let bar = document.querySelector('.indicator__bar');
+  let modal = document.querySelectorAll('.modal');
+  let bgModal = document.querySelectorAll('.modal__bg');
+  let qIcon = document.querySelector('.icn__question');
+
   let scroll = 0;
   let gauge = 0;
+  let vignette;
+  let isPlaying = false;
 
   /**
    * デバイス判定
@@ -98,8 +104,24 @@
     scene.add(ambient);
 
     fireElement = new FireElement(2, 4, 2, 0.5, camera);
-    fireElement.mesh.position.set(0, 0.5, -2);
+    fireElement.mesh.position.set(0, 0.5, -3);
     scene.add(fireElement.mesh);
+
+    // ポストプロセス設定
+    composer = new THREE.EffectComposer(renderer);
+    renderPass = new THREE.RenderPass(scene, camera);
+    let bloom = new THREE.BloomPass(1.0, 25, 0.5, 512);
+    vignette = new THREE.ShaderPass(THREE.VignetteShader);
+    vignette.uniforms.darkness.value = 2.0;
+
+    composer.addPass(renderPass);
+    composer.addPass(bloom);
+    composer.addPass(vignette);
+
+    let screen = new THREE.ShaderPass(THREE.CopyShader);
+    screen.renderToScreen = true;
+    composer.addPass(screen);
+
 
     prevTime = Date.now();
 
@@ -107,25 +129,11 @@
   }
 
 
+
   /**
    * イベントをアタッチ
    */
   function attachEv(){
-    /**
-     * イベント判定
-     * ref: http://chibinowa.net/note/js/threejs-obj-mouse.html
-     */
-    // raycaster = new THREE.Raycaster();
-    // renderer.domElement.addEventListener('click', (e) => {
-    //   let mouse = new THREE.Vector2();
-    //   mouse.x = (e.clientX / window.innerWidth) * 2 - 1
-    //   mouse.y = -(e.clientY / window.innerHeight) * 2 + 1
-    //   raycaster.setFromCamera(mouse, camera);
-    //   let intersect = raycaster.intersectObject(box);
-    //   if(intersect.length > 0){
-    //   }
-    // });
-
     /**
      * リサイズイベント
      */
@@ -135,12 +143,30 @@
 
     // ゲージ幅表示
     function setBarWidth(){
-      gauge = window.innerWidth * fireElement.material.uniforms.size.value/5.0;
+      if(!isPlaying) return;
+      gauge = parseInt(window.innerWidth * fireElement.material.uniforms.size.value/5.0, 10);
       if(gauge > 0 && gauge < window.innerWidth){
         bar.style.width = gauge + 'px';
+      }else{
+        if(gauge <= 0 && isPlaying){
+          isPlaying = false;
+          bar.style.width = '0px';
+          alert('over');
+        }
       }
     }
 
+    // ビネット調整
+    function setVignetteDarkness(){
+      let darkness = 7.0 - fireElement.material.uniforms.size.value * 2.0;
+      if(darkness <= 1.5){
+        vignette.uniforms.darkness.value = 1.5;
+      }else{
+        vignette.uniforms.darkness.value = darkness;
+      }
+    }
+
+    // マウス・タップポイント取得
     function getPosition(e){
       if(device === 'sp' || device === 'tab'){
         return e.touches[0].pageY;
@@ -149,14 +175,46 @@
       }
     }
 
+    function openModal(type){
+      for(let i = 0, cnt = modal.length; i < cnt; i++){
+        if(modal[i].getAttribute('data-modal') === type){
+          TweenMax.set(modal[i], {display: 'block'});
+          TweenMax.to(modal[i], 0.2, {
+            opacity: 1
+          });
+        }
+      }
+    }
+
+    function closeModal(){
+      TweenMax.to('.modal', 0.3, {
+        opacity: 0,
+        onComplete: () => {
+          TweenMax.set('.modal', {display: 'none'});
+        }
+      });
+    }
+
+    qIcon.addEventListener('click', (e) => {
+      openModal('guide');
+    }, false);
+
+    // モーダル閉じる
+    for(let i = 0, cnt = bgModal.length; i < cnt; i++){
+      bgModal[i].addEventListener('click', (e) => {
+        closeModal();
+      }, false);
+    }
+
     /**
      * クリックイベント
      */
-    window.addEventListener(evType.down, (e) => {
+    content.addEventListener(evType.down, (e) => {
       clearTimeout(timer);
 
       if(!content.classList.contains('content--show')){
         content.classList.add('content--show');
+        isPlaying = true;
       }
 
       // ポジション取得
@@ -168,30 +226,40 @@
 
           // ゲージ表示
           setBarWidth();
+          // ビネット調整
+          setVignetteDarkness();
     
           fireScaleAnim();
         }, 1000/60);
       }
-      fireScaleAnim();
+      if(isPlaying){
+        fireScaleAnim();
+      }
 
     }, false);
 
-    window.addEventListener(evType.move, (e) => {
+    content.addEventListener(evType.move, (e) => {
       // ポジション取得
       y = getPosition(e);
-      if(y && base_y){
+      if(isPlaying && y && base_y && scroll <= 0){
+
         if(y < base_y){
-          scroll++;
+          if(scroll + 4 >= 0){
+            scroll = 0;
+          }else{
+            scroll += 4;
+          }
         }else{
-          scroll--;
+          scroll -= 4;
         }
         textArea.style.transform = 'translate(0, ' + scroll + 'px)';
       }
 
     }, false);
 
-    window.addEventListener(evType.up, () => {
+    content.addEventListener(evType.up, () => {
       clearTimeout(timer);
+      clearTimeout(scrollTimer);
 
       y = null;
       base_y = null;
@@ -202,6 +270,8 @@
 
           // ゲージ表示
           setBarWidth();
+          // ビネット調整
+          setVignetteDarkness();
 
           if(fireElement.material.uniforms.size.value <= 0.0){
             clearTimeout(timer);
@@ -211,7 +281,10 @@
           }
         }, 1000/60);
       }
-      fireScaleAnim();      
+
+      if(isPlaying){
+        fireScaleAnim();
+      }
     }, false);
 
   }
@@ -223,6 +296,7 @@
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+    composer.setSize(window.innerWidth, window.innerHeight);
   }
 
 
@@ -243,7 +317,8 @@
   }
 
   function render(){
-    renderer.render(scene, camera);
+    // renderer.render(scene, camera);
+    composer.render();
   }
 
 })();

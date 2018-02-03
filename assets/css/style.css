@@ -2,9 +2,11 @@
     margin: 0;
     padding: 0;
     outline: none;
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI","Noto Sans Japanese","ヒラギノ角ゴ ProN W3", Meiryo, sans-serif;
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
+    list-style: none;
 }
 
 canvas{
@@ -12,15 +14,31 @@ canvas{
     pointer-events: none;
 }
 
+#wrapper{
+    position: relative;   
+}
+
+#container{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;    
+}
+
 #content{
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0);
     transition: 0.3s all;
-    pointer-events: none;
+}
+@media screen and (max-width: 640px){
+    #content{
+        background: rgba(0, 0, 0, 0.2);
+    }
 }
 
 .content__box{
@@ -30,7 +48,7 @@ canvas{
     left: 0;
     bottom: 0;
     width: 50%;
-    height: 60%;
+    height: 70%;
     margin: auto;
     overflow: hidden;
     color: #fff;
@@ -39,7 +57,6 @@ canvas{
 @media screen and (max-width: 640px){
     .content__box{
         width: 80%;
-        height: 50%;
     }
 }
 
@@ -65,10 +82,15 @@ canvas{
     left: 50%;
     width: 100%;
     font-family: 'Oswald', sans-serif;
-    font-size: 36px;
+    font-size: 48px;
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
     text-align: center;
+}
+@media screen and (max-width: 640px){
+    .content__hdg{
+        font-size: 30px;
+    }
 }
 
 .content__main{
@@ -79,23 +101,23 @@ canvas{
     height: 100%;
     box-sizing: border-box;
     font-size: 16px;
-    line-height: 1.8;
+    line-height: 2.2;
     letter-spacing: 0.06em;
     opacity: 0;
+    border-right: 1px solid #444;
+    border-left: 1px solid #444;
     transition: 0.3s opacity;
 }
-
 
 .content__main:before{
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 30px;
+    height: 20px;
     content: '';
     background: -prefix-linear-gradient(top, #333, rgba(255, 255, 255, 0));
     background: linear-gradient(to bottom, #333, rgba(255, 255, 255, 0));
-    z-index: 2;
 }
 
 .content__main:after{
@@ -103,25 +125,38 @@ canvas{
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 30px;
+    height: 20px;
     content: '';
     background: -prefix-linear-gradient(top, rgba(255, 255, 255, 0), #333);
     background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #333);
-    z-index: 2;
+}
+
+@media screen and (max-width: 640px){
+    .content__main{
+        line-height: 1.8;
+        border-right: none;
+        border-left: none;
+    }
+    .content__main:before,
+    .content__main:after{
+        content: normal;
+    }
 }
 
 .content__txt{
     position: relative;
-    padding: 200px 0 30px;
+    padding: 200px 10px 30px;
 }
 .content__txt p{
+    margin: 0 0 1em;
+    font-weight: bold;
     pointer-events: none;
     text-shadow: 0 0 10px #000;
 }
 
 #indicator{
     position: fixed;
-    bottom: 0;
+    top: 0;
     left: 0;
     width: 100%;
     height: 4px;
@@ -132,4 +167,96 @@ canvas{
     width: 0;
     height: 4px;
     background: #f33d52;
+}
+
+.icn__question{
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+}
+.icn__question .fa-question{
+    padding: 8px;
+    width: 18px !important;
+    height: 18px;
+    color: #fff;
+    border: 2px solid #fff;
+    border-radius: 50%;
+}
+
+.modal{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    opacity: 0;
+    transition: 0.3s all;
+}
+
+.modal__bg{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+}
+.modal__guide__box{
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 60%;
+    height: 40%;
+    padding: 2%;
+    box-sizing: border-box;
+    margin: auto;
+    background: #fff;
+}
+@media screen and (max-width: 640px){
+    .modal__guide__box{
+        padding: 4%;
+        width: 80%;
+        height: 50%;
+    }
+}
+@media screen and (max-width:  440px){
+    .modal__guide__box{
+        padding: 5%;
+        height: 40%;
+    }
+}
+@media screen and (max-width:  320px){
+    .modal__guide__box{
+        height: 50%;
+    }
+}
+
+
+.modal__guide__hdg{
+    margin: 0 0 10px;
+    font-size: 22px;
+    text-align: center;
+}
+.modal__guide__item{
+    margin-top: 15px;
+    margin-left: 1.1em;
+    text-indent: -1.1em;
+}
+@media screen and (max-width: 640px){
+    .modal__guide__hdg{
+        font-size: 18px;
+    }
+    .modal__guide__item{
+        font-size: 12px;
+    }
+}
+
+.modal__gameover{
+    display: none;
 }

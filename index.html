@@ -7,6 +7,7 @@
     <title>GLSL Shader</title>
     <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
     <link rel="stylesheet" href="./assets/css/style.css">
+    <script defer src="./assets/js/libs/fontawesome-all.min.js"></script>
   </head>
   <body>
     <script id="vs" type="x-shader/x-vertex">
@@ -129,21 +130,46 @@
       }
     </script>
 
-    <div id="container"></div>
+    <div id="wrapper">
+      <div id="container"></div>
 
-    <div id="content">
-      <div class="content__box">
-        <div class="content__header">
-          <h1 class="content__hdg"></h1>
-        </div>
-        <div class="content__main">
-          <div class="content__txt"></div>
+      <div id="content">
+        <div class="content__box">
+          <div class="content__header">
+            <h1 class="content__hdg"></h1>
+          </div>
+          <div class="content__main">
+            <div class="content__txt"></div>
+          </div>
         </div>
       </div>
-    </div>
+  
+      <div id="indicator">
+        <div class="indicator__bar"></div>
+      </div>
+  
+      <div class="icn__question">
+        <i class="fas fa-question"></i>
+      </div>
 
-    <div id="indicator">
-      <div class="indicator__bar"></div>
+      <div class="modal" data-modal="guide">
+        <div class="modal__bg"></div>
+        <div class="modal__content modal__guide__box">
+          <h2 class="modal__guide__hdg">操作方法</h2>
+          <ul class="modal__guide__items">
+            <li class="modal__guide__item">1. 画面をタップ or クリックし続けると、炎とともに物語がはじまります。</li>
+            <li class="modal__guide__item">2. タップ/クリックしたまま画面を上下に動かすと物語のテキストがスクロールします。</li>
+            <li class="modal__guide__item">3. 画面をタップ/クリックし続けると炎にあわせて画面上部に赤いゲージが出てきます。ゲージが0あるいは画面幅いっぱいになると物語は強制終了します</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="modal" data-modal="gameover">
+        <div class="modal__bg"></div>
+        <div class="modal__content">
+          
+        </div>
+      </div>  
     </div>
 
     <script src="./assets/js/utils/xhr.js"></script>
@@ -152,6 +178,15 @@
     <script src="./assets/js/libs/TweenMax.min.js"></script>
     <script src="./assets/js/libs/three.min.js"></script>
     <script src="./assets/js/libs/OrbitControls.js"></script>
+    <script src="./assets/js/libs/EffectComposer.js"></script>
+    <script src="./assets/js/libs/MaskPass.js"></script>
+    <script src="./assets/js/libs/RenderPass.js"></script>
+    <script src="./assets/js/libs/ShaderPass.js"></script>
+    <script src="./assets/js/libs/CopyShader.js"></script>
+    <script src="./assets/js/libs/VignetteShader.js"></script>
+    <script src="./assets/js/libs/ConvolutionShader.js"></script>
+    <script src="./assets/js/libs/BloomPass.js"></script>
+
     <script src="./assets/js/fire.js"></script>
     <script defer src="./assets/js/app.js"></script>
   </body>
