@@ -21,6 +21,8 @@
   let modal = document.querySelectorAll('.modal');
   let bgModal = document.querySelectorAll('.modal__bg');
   let qIcon = document.querySelector('.icn__question');
+  let gameOverBtn = document.querySelector('.modal__over__btn');
+  let gameClearBtn = document.querySelector('.modal__clear__btn');
 
   let scroll = 0;
   let gauge = 0;
@@ -145,13 +147,20 @@
     function setBarWidth(){
       if(!isPlaying) return;
       gauge = parseInt(window.innerWidth * fireElement.material.uniforms.size.value/5.0, 10);
-      if(gauge > 0 && gauge < window.innerWidth){
+      if(gauge >= 0 && gauge < window.innerWidth){
         bar.style.width = gauge + 'px';
       }else{
-        if(gauge <= 0 && isPlaying){
-          isPlaying = false;
+        if(gauge < 0 && isPlaying){
           bar.style.width = '0px';
-          alert('over');
+          isPlaying = false;
+          openModal('gameover');
+        }else if(gauge >= window.innerWidth){
+          clearTimeout(timer);
+          clearTimeout(scrollTimer);
+          bar.style.width = '0px';
+          fireElement.material.uniforms.size.value = 0.0;
+          isPlaying = false;
+          openModal('gameover');
         }
       }
     }
@@ -197,6 +206,22 @@
 
     qIcon.addEventListener('click', (e) => {
       openModal('guide');
+    }, false);
+
+    gameOverBtn.addEventListener('click', (e) => {
+      closeModal();
+      isPlaying = true;
+    }, false);
+
+    gameClearBtn.addEventListener('click', (e) => {
+      clearTimeout(timer);
+      clearTimeout(scrollTimer);
+      bar.style.width = '0px';
+      fireElement.material.uniforms.size.value = 0.0;
+      content.classList.remove('content--show');
+      textArea.style.transform = 'translate(0, 0)';
+      scroll = 0;
+      closeModal();
     }, false);
 
     // モーダル閉じる
@@ -252,7 +277,12 @@
         }else{
           scroll -= 4;
         }
-        textArea.style.transform = 'translate(0, ' + scroll + 'px)';
+        if(Math.abs(scroll) >= textArea.clientHeight){
+          isPlaying = false;
+          openModal('gameclear');
+        }else{
+          textArea.style.transform = 'translate(0, ' + scroll + 'px)';
+        }
       }
 
     }, false);

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>GLSL Shader</title>
+    <title>WebGLの熱量でカイロにもなる、そんなコンテンツ</title>
     <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
     <link rel="stylesheet" href="./assets/css/style.css">
     <script defer src="./assets/js/libs/fontawesome-all.min.js"></script>
@@ -150,8 +150,8 @@
   
       <div class="icn__question">
         <i class="fas fa-question"></i>
-      </div>
-
+      </div> 
+  
       <div class="modal" data-modal="guide">
         <div class="modal__bg"></div>
         <div class="modal__content modal__guide__box">
@@ -159,17 +159,28 @@
           <ul class="modal__guide__items">
             <li class="modal__guide__item">1. 画面をタップ or クリックし続けると、炎とともに物語がはじまります。</li>
             <li class="modal__guide__item">2. タップ/クリックしたまま画面を上下に動かすと物語のテキストがスクロールします。</li>
-            <li class="modal__guide__item">3. 画面をタップ/クリックし続けると炎にあわせて画面上部に赤いゲージが出てきます。ゲージが0あるいは画面幅いっぱいになると物語は強制終了します</li>
+            <li class="modal__guide__item">3. 画面をタップ/クリックし続けると炎の勢いが画面上部に赤いゲージで反映されます。ゲージが0あるいは画面幅いっぱいになると物語は強制終了します。ゲージに気をつけて読み進めてください。</li>
           </ul>
         </div>
       </div>
 
       <div class="modal" data-modal="gameover">
-        <div class="modal__bg"></div>
-        <div class="modal__content">
-          
+        <div class="modal__over__bg"></div>
+        <div class="modal__content modal__over__box">
+          <p class="modal__over__txt">火が消えた、<br>あるいは燃えきってしまったため、<br>物語は終了しました。</p>
+          <button class="modal__over__btn">再点火</button>                      
         </div>
-      </div>  
+      </div> 
+
+      <div class="modal" data-modal="gameclear">
+        <div class="modal__clear__bg"></div>
+        <div class="modal__content modal__clear__box">
+          <p class="modal__clear__txt">マッチ売りの少女<br>ハンス・クリスチャン・アンデルセン</p>
+          <button class="modal__clear__btn">最初から始める</button>                      
+        </div>
+      </div> 
+  
+
     </div>
 
     <script src="./assets/js/utils/xhr.js"></script>

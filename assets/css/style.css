@@ -197,6 +197,8 @@ canvas{
     transition: 0.3s all;
 }
 
+.modal__over__bg,
+.modal__clear__bg,
 .modal__bg{
     position: fixed;
     top: 0;
@@ -205,15 +207,66 @@ canvas{
     height: 100%;
     background: rgba(0, 0, 0, 0.6);
 }
+
+.modal__over__box{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    color: #fff;
+    text-align: center;    
+}
+.modal__over__txt{
+    margin: 0 0 20px;
+    font-size: 22px;
+    line-height: 1.8;
+    font-weight: bold;
+}
+.modal__over__btn{
+    border: none;
+    background: #528fe3;
+    padding: 5px 20px;
+    color: #fff;
+    font-size: 18px;
+    border-radius: 3px;    
+}
+
+.modal__clear__box{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    color: #fff;
+    text-align: center;    
+}
+.modal__clear__txt{
+    margin: 0 0 20px;
+    font-size: 22px;
+    line-height: 1.8;
+    font-weight: bold;
+}
+.modal__clear__btn{
+    border: none;
+    background: #528fe3;
+    padding: 5px 20px;
+    color: #fff;
+    font-size: 18px;
+    border-radius: 3px;    
+}
+
 .modal__guide__box{
     position: absolute;
     top: 0;
     left: 0;
     bottom: 0;
     right: 0;
-    width: 60%;
-    height: 40%;
-    padding: 2%;
+    width: 600px;
+    height: 280px;
+    padding: 20px;
     box-sizing: border-box;
     margin: auto;
     background: #fff;
