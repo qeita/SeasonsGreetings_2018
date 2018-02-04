@@ -264,8 +264,8 @@ canvas{
     left: 0;
     bottom: 0;
     right: 0;
-    width: 600px;
-    height: 280px;
+    width: 640px;
+    height: 340px;
     padding: 20px;
     box-sizing: border-box;
     margin: auto;
@@ -275,18 +275,18 @@ canvas{
     .modal__guide__box{
         padding: 4%;
         width: 80%;
-        height: 50%;
+        height: 60%;
     }
 }
 @media screen and (max-width:  440px){
     .modal__guide__box{
         padding: 5%;
-        height: 40%;
+        height: 50%;
     }
 }
 @media screen and (max-width:  320px){
     .modal__guide__box{
-        height: 50%;
+        height: 76%;
     }
 }
 
@@ -301,11 +301,17 @@ canvas{
     margin-left: 1.1em;
     text-indent: -1.1em;
 }
+.modal__guide__txt{
+    margin-top: 15px;
+}
 @media screen and (max-width: 640px){
     .modal__guide__hdg{
         font-size: 18px;
     }
     .modal__guide__item{
+        font-size: 12px;
+    }
+    .modal__guide__txt{
         font-size: 12px;
     }
 }
